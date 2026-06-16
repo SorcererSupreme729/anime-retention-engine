@@ -5,6 +5,7 @@ import requests
 import plotly.graph_objs as go
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CYBORG])
+server = app.server
 
 sidebar = html.Div([
     html.H4("⚙️ Settings", className="text-info"),
