@@ -97,8 +97,8 @@ def update_graph(n_clicks, episodes, score, source, season, studio, genres_text)
     }
     
     input_dict = {
-        'episodes': episodes,
-        'score': score,
+        'episodes': int(episodes) if episodes is not None else 12,
+        'score': float(score) if score is not None else 8.0,
         f'source_{source}': 1,
         f'season_{season}': 1,
         f'studio_{studio}': 1
@@ -109,6 +109,8 @@ def update_graph(n_clicks, episodes, score, source, season, studio, genres_text)
     input_df = pd.DataFrame([input_dict])
     
     input_df = input_df.reindex(columns=model_columns, fill_value=0)
+    
+    input_df = input_df.astype(float)
     
     hit_prob = float(model.predict_proba(input_df)[0][1])
 
