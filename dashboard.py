@@ -72,7 +72,8 @@ app.layout = dbc.Container([
      State('input-source', 'value'),
      State('input-season', 'value'),
      State('input-studio', 'value'),
-     State('input-genres', 'value')]
+     State('input-genres', 'value')],
+     prevent_initial_call=True
 )
 def update_graph(n_clicks, episodes, score, source, season, studio, genres_text):
     if n_clicks == 0:
