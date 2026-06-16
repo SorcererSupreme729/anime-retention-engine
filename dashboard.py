@@ -4,6 +4,12 @@ import dash_bootstrap_components as dbc
 import requests
 import plotly.graph_objs as go
 
+import joblib
+import pandas as pd
+
+model = joblib.load('anime_model.pkl')
+model_columns = joblib.load('model_columns.pkl')
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CYBORG])
 server = app.server
 
@@ -90,11 +96,27 @@ def update_graph(n_clicks, episodes, score, source, season, studio, genres_text)
         "genres": genre_list
     }
     
-    response = requests.post('http://127.0.0.1:8000/simulate', json=payload)
-    data = response.json()
+    input_dict = {
+        'episodes': episodes,
+        'score': score,
+        f'source_{source}': 1,
+        f'season_{season}': 1,
+        f'studio_{studio}': 1
+    }
+    for g in genre_list:
+        input_dict[f'genre_{g}'] = 1
+        
+    input_df = pd.DataFrame([input_dict])
     
-    curve = data['curve']
-    hit_prob = data['hit_probability']
+    input_df = input_df.reindex(columns=model_columns, fill_value=0)
+    
+    hit_prob = float(model.predict_proba(input_df)[0][1])
+
+    weekly_ret_rate = float(0.70 + (0.25 * hit_prob))
+    
+    curve = [10000]
+    for _ in range(2, 13):
+        curve.append(int(curve[-1] * weekly_ret_rate))
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=list(range(1, 13)), y=curve, mode='lines+markers', name='Viewers', line=dict(color='#00f2fe', width=3)))
