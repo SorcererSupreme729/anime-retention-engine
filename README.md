@@ -59,7 +59,7 @@ But on free hosting, the container kept timing out.
 So instead of using the API in production, I embedded the model directly into the frontend callbacks. 
 The API code is still in the repo, just not used in the live version.
 
-<u> Here's how it works now </u> :
+Here's how it works now :
 The model file (anime_model.pkl) loads into memory using joblib when the server starts.
 Instead of making external API calls, the Dash callbacks directly run the model locally.
 User inputs get validated, converted, and passed to the model.
